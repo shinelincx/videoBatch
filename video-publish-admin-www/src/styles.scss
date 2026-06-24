@@ -1,0 +1,206 @@
+@import 'ng-zorro-antd/ng-zorro-antd.min.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  color: #333;
+  background-color: #f0f2f5;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.page-container {
+  padding: 12px;
+}
+
+.page-header {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .page-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    line-height: 22px;
+  }
+}
+
+.card-container {
+  background: #fff;
+  border-radius: 2px;
+  padding: 12px;
+}
+
+.table-operations {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+body .main-layout .content {
+  margin: 10px 12px;
+  min-height: calc(100vh - 64px);
+}
+
+body .content .page-container {
+  padding: 0;
+}
+
+body .content .page-header {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+}
+
+body .content .page-title {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+body .content .card-container {
+  padding: 12px;
+}
+
+body .content .toolbar,
+body .content .detail-toolbar,
+body .content .table-operations {
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+body .content .toolbar-left,
+body .content .toolbar-right {
+  gap: 8px;
+}
+
+body .content .ant-table {
+  font-size: 13px;
+}
+
+body .content .ant-table-thead > tr > th {
+  padding: 7px 10px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+body .content .ant-table-tbody > tr > td {
+  padding: 6px 10px;
+  line-height: 18px;
+  vertical-align: middle;
+}
+
+body .content .ant-table-small .ant-table-thead > tr > th,
+body .content .ant-table-small .ant-table-tbody > tr > td {
+  padding: 5px 8px;
+}
+
+body .content .ant-table-pagination.ant-pagination {
+  margin: 10px 0 0;
+}
+
+body .content .ant-pagination-item,
+body .content .ant-pagination-prev,
+body .content .ant-pagination-next {
+  min-width: 26px;
+  height: 26px;
+  line-height: 24px;
+}
+
+body .content .ant-pagination-options {
+  margin-left: 8px;
+}
+
+body .content .ant-btn {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 13px;
+  line-height: 26px;
+}
+
+body .content .ant-btn-sm {
+  height: 24px;
+  padding: 0 6px;
+  line-height: 22px;
+}
+
+body .content .ant-btn-link {
+  height: auto;
+  padding: 0 4px;
+  line-height: 20px;
+}
+
+body .content .ant-input,
+body .content .ant-input-number,
+body .content .ant-picker,
+body .content .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+  min-height: 28px;
+  font-size: 13px;
+}
+
+body .content .ant-input {
+  padding: 3px 8px;
+}
+
+body .content .ant-input-number-input {
+  height: 26px;
+  padding: 0 8px;
+}
+
+body .content .ant-select-single .ant-select-selector .ant-select-selection-item,
+body .content .ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+  line-height: 26px;
+}
+
+body .content .ant-form-item {
+  margin-bottom: 12px;
+}
+
+body .content .ant-form-item-label {
+  padding-bottom: 4px;
+}
+
+body .content .ant-tag {
+  margin-right: 0;
+  padding: 0 6px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+body .content .ant-avatar-sm {
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+}
+
+body .ant-modal-header {
+  padding: 12px 16px;
+}
+
+body .ant-modal-body {
+  padding: 14px 16px;
+}
+
+body .ant-modal-footer {
+  padding: 8px 16px;
+}

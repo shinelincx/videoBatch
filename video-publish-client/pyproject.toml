@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "video-publish-client"
+version = "0.1.0"
+description = "wxPython desktop client for video publishing."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "wxPython>=4.2.1",
+]
+
+[project.scripts]
+video-publish-client = "app:main"
+
+[tool.setuptools]
+py-modules = [
+    "api",
+    "app",
+    "auth_store",
+    "config",
+    "main",
+    "robot_heartbeat",
+    "single_instance",
+]
+packages = ["services", "ui"]

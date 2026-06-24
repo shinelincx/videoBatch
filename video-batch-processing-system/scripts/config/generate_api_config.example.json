@@ -1,0 +1,12 @@
+{
+  "base_url": "http://localhost:8000",
+  "api_token": "replace-with-cw-agent-token",
+  "copy_endpoint": "/api/v2/generate-copy",
+  "image_copy_endpoint": "/api/v2/generate-copy/images",
+  "oss": {
+    "access_key_id": "replace-with-access-key-id",
+    "access_key_secret": "replace-with-access-key-secret",
+    "endpoint": "https://oss-cn-example.aliyuncs.com",
+    "bucket": "replace-with-bucket"
+  }
+}

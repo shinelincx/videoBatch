@@ -1,0 +1,46 @@
+{
+  "material_paths": {
+    "base_dir": "assets",
+    "image_dir": "assets/input/{task_id}/img",
+    "video_dir": "assets/input/{task_id}/mv",
+    "bgm_dir": "assets/bgm",
+    "output_dir": "assets/output/{task_id}",
+    "watermark_dir": "assets/watermark",
+    "prepend_dir": "assets/prepend",
+    "append_dir": "assets/append",
+    "sticker_dir": "assets/sticker"
+  },
+  "randomization": {
+    "frame": {
+      "drop_frame_range": [10, 20],
+      "crop_pct_range": [1.0, 2.0],
+      "blur_strength_range": [1.0, 3.0],
+      "shake_pct_range": [1.0, 3.0],
+      "brightness_range": [-0.1, 0.1],
+      "contrast_range": [0.9, 1.1],
+      "saturation_range": [0.9, 1.1],
+      "color_balance_range": [-0.2, 0.2],
+      "gamma_range": [0.5, 1],
+      "vintage_bw_range": [0.5, 1]
+    },
+    "overlay": {
+      "watermark_transparency_range": [0.2, 0.3],
+      "subtitle_font_size_range": [20, 40],
+      "subtitle_colors": ["white", "yellow", "green", "cyan"],
+      "subtitle_x_options": ["(w-text_w)/2", "w*0.2", "w*0.6"],
+      "subtitle_y_options": ["h*0.9", "h*0.8", "h*0.85"],
+      "danmaku_texts": ["666", "来了来了", "牛啊", "太强了", "厉害了"],
+      "danmaku_colors": ["white", "red", "yellow", "orange"],
+      "danmaku_speed_range": [50, 150],
+      "danmaku_density_range": [3, 8],
+      "danmaku_font_size_range": [20, 36],
+      "danmaku_y_pct_range": [0.05, 0.9]
+    },
+    "media_formats": {
+      "audio": ["mp3", "wav", "aac", "ogg", "m4a", "flac", "wma"],
+      "video": ["mp4", "mov", "avi", "mkv", "webm"]
+    },
+    "copywriting_styles": ["幽默", "正式", "亲切", "悬疑"]
+  },
+  "audio_params": {"voice_type": "female", "speech_speed": 2.0}
+}

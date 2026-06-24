@@ -1,0 +1,82 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      # Shiro 使用 HttpSession，默认过短易被误判为「很快掉线」
+      timeout: 4h
+
+spring:
+  application:
+    name: admin
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: ${DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/video-publish-admin?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true}
+#    url: ${DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/video_publish?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true}
+    username: root
+    password: root
+#    password: 6o1niz1c
+    druid:
+      # 初始连接数
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 5
+      # 最大连接池数量
+      maxActive: 50
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+
+    redis:
+      host: ${REDIS_URL:127.0.0.1} #本地redis
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 1
+      timeout: 10000
+      jedis:
+        pool:
+          # 连接池中的最大空闲连接
+          max-idle: ${JEDIS_MAX_IDLE:50}
+          # 连接池中的最小空闲连接
+          min-idle: ${JEDIS_MIN_IDLE:8}
+          # 连接池最大连接数（使用负值表示没有限制）
+          max-active: ${JEDIS_MAX_ACTIVE:100}
+          # 连接池最大阻塞等待时间（使用负值表示没有限制）
+          max-wait: -1
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  typeAliasesPackage: com.lu.admin
+  configuration:
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+  global-config:
+    banner: false
+    refresh-mapper: true
+    db-config:
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+
+shiro:
+  loginUrl: /auth/page/401
+  unauthorizedUrl: /auth/page/403
+  successUrl: /auth/page/index
+
+aes:
+  key: 5?E&gi.eoh8*gn+3
+  iv: _eme*g7*gU3Y-0.2
+  signKey: s.0wl?.i_s43$i1_
+
+grpc:
+  server:
+    enabled: ${GRPC_SERVER_ENABLED:true}
+    port: ${GRPC_SERVER_PORT:9090}

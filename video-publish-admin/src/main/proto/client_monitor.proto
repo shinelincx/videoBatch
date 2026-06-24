@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package video.publish.client;
+
+option java_multiple_files = true;
+option java_package = "com.lu.admin.grpc.client";
+option java_outer_classname = "ClientMonitorProto";
+
+service ClientMonitorService {
+  rpc Register(ClientHeartbeatRequest) returns (ClientHeartbeatResponse);
+  rpc Heartbeat(ClientHeartbeatRequest) returns (ClientHeartbeatResponse);
+  rpc Offline(ClientOfflineRequest) returns (ClientAck);
+  rpc PollCommand(ClientCommandPollRequest) returns (ClientCommandResponse);
+  rpc SubscribeCommand(ClientCommandPollRequest) returns (stream ClientCommandResponse);
+}
+
+message ClientHeartbeatRequest {
+  string machine_name = 1;
+  string mac_address = 2;
+  string status = 3;
+  int64 tenant_id = 4;
+  string client_version = 5;
+}
+
+message ClientHeartbeatResponse {
+  int64 robot_id = 1;
+  string machine_name = 2;
+  string status = 3;
+  int64 server_time_millis = 4;
+}
+
+message ClientOfflineRequest {
+  string machine_name = 1;
+  string mac_address = 2;
+  int64 tenant_id = 3;
+}
+
+message ClientCommandPollRequest {
+  string machine_name = 1;
+  string mac_address = 2;
+  int64 tenant_id = 3;
+}
+
+message ClientCommandResponse {
+  int64 robot_id = 1;
+  string command = 2;
+  int64 command_time_millis = 3;
+  string payload = 4;
+}
+
+message ClientAck {
+  bool success = 1;
+  string message = 2;
+}

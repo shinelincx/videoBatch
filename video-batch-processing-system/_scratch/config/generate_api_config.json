@@ -1,0 +1,10 @@
+{
+  "base_url": "http://47.113.125.61:8700",
+  "api_token": "cw-67c87d2d9f39c444608d4b0e0ac2b473",
+  "oss": {
+    "access_key_id": "LTAI5t9CJ9pAvCkRbFvvwN7C",
+    "access_key_secret": "ATroO3Mx9gXLeioGauYi0CCX7uKsqq",
+    "endpoint": "https://oss-cn-shenzhen.aliyuncs.com",
+    "bucket": "cw-agent"
+  }
+}

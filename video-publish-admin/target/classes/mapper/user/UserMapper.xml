@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lu.admin.modules.user.mapper.UserMapper">
+    <select id="getByPage" resultType="com.lu.admin.modules.user.dto.UserDTO">
+        select t.*,
+            t1.balance,
+            (select create_time from login_log where user_id = t.id order by create_time desc limit 1) loginTime,
+            (select login_ip from login_log where user_id = t.id order by create_time desc limit 1) loginIp,
+
+            p.name platformName
+        from `user` t
+        left join user_wallet t1 on t1.user_id = t.id and t1.deleted = 0
+        left join platform p on p.id = t.platform_id
+        where t.deleted = 0
+        <if test="params.id != null and params.id != ''">
+            and t.id = #{params.id}
+        </if>
+        <if test="params.platformId != null and params.platformId != ''">
+            and t.platform_id = #{params.platformId}
+        </if>
+        <if test="params.phone != null and params.phone != ''">
+            and t.phone = #{params.phone}
+        </if>
+        <if test="params.nickName != null and params.nickName != ''">
+            and t.nick_name like CONCAt('%', #{params.nickName,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="params.startTime != null and params.endTime != null">
+            and <![CDATA[and t.create_time >= #{params.startTime} and t.create_time <= #{params.endTime} ]]>
+        </if>
+        order by t.online desc
+    </select>
+
+    <select id="getUser" resultType="com.lu.admin.modules.user.dto.UserDTO">
+        select t.*,
+
+               (select create_time from login_log where user_id = t.id order by create_time desc limit 1) loginTime,
+                (select login_ip from login_log where user_id = t.id order by create_time desc limit 1) loginIp,
+                (select login_ip_name from login_log where user_id = t.id order by create_time desc limit 1) loginIpName,
+
+               IFNULL(t2.balance, 0) balance
+        from `user` t
+            left join user_wallet t2 on t2.user_id = t.id and t2.deleted = 0
+        where t.deleted = 0 and t.id = #{userId}
+    </select>
+</mapper>

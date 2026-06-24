@@ -1,0 +1,10 @@
+PySide6
+requests
+cryptography
+Pillow
+oss2
+aiohttp>=3.9.0
+edge-tts>=6.1.0
+
+# Test dependencies
+pytest

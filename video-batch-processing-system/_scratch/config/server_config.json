@@ -1,0 +1,81 @@
+{
+  "cfg-img-v2": {
+    "version": 4,
+    "clip_mode": {
+      "mode": "image-to-video"
+    },
+    "video_items": {
+      "frame_extraction": true,
+      "cropping": true,
+      "blur": true,
+      "shake": true,
+      "watermark": true,
+      "brightness": true,
+      "contrast": true,
+      "saturation": true,
+      "color_balance": false,
+      "gamma": false,
+      "vintage_bw": false
+    },
+    "text_items": {
+      "subtitles": true,
+      "danmaku": false,
+      "sticker": true
+    },
+    "affix": {
+      "prepend_enabled": false,
+      "append_enabled": false
+    },
+    "audio": {
+      "background_music_enabled": true,
+      "speed_adjustment_enabled": false,
+      "pitch_enabled": true
+    },
+    "repetition": {
+      "loop_count": 1
+    },
+    "clip_duration": {
+      "default_duration_per_image": 3.0
+    }
+  },
+  "cfg-ref-v3": {
+    "version": 5,
+    "clip_mode": {
+      "mode": "reference-video",
+      "img_video_position": "after"
+    },
+    "video_items": {
+      "frame_extraction": true,
+      "cropping": true,
+      "blur": true,
+      "shake": true,
+      "watermark": true,
+      "brightness": true,
+      "contrast": true,
+      "saturation": true,
+      "color_balance": false,
+      "gamma": false,
+      "vintage_bw": false
+    },
+    "text_items": {
+      "subtitles": true,
+      "danmaku": false,
+      "sticker": false
+    },
+    "affix": {
+      "prepend_enabled": false,
+      "append_enabled": false
+    },
+    "audio": {
+      "background_music_enabled": true,
+      "speed_adjustment_enabled": true,
+      "pitch_enabled": true
+    },
+    "repetition": {
+      "loop_count": 2
+    },
+    "clip_duration": {
+      "default_duration_per_image": 2.0
+    }
+  }
+}

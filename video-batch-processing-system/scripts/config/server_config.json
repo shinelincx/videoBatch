@@ -1,0 +1,64 @@
+{
+    "cf1g-img-v31": {
+        "version": 1,
+        "clip_mode": {"mode": "image-to-video"},
+        "video_items": {
+            "frame_extraction": true,
+            "cropping": true,
+            "blur": true,
+            "shake": true,
+            "watermark": true,
+            "brightness": true,
+            "contrast": true,
+            "saturation": true,
+            "color_balance": false,
+            "gamma": false,
+            "vintage_bw": false
+        },
+        "text_items": {
+            "subtitles": false,
+            "subtitles_mode": "text",
+            "danmaku": false,
+            "sticker": true
+        },
+        "affix": {"prepend_enabled": false, "append_enabled": false},
+        "audio": {
+            "background_music_enabled": true,
+            "speed_adjustment_enabled": false,
+            "pitch_enabled": true
+        },
+        "repetition": {"loop_count": 1},
+        "clip_duration": {"default_duration_per_image": 3.0}
+    },
+    "cf3g-ref-v32": {
+        "version": 2,
+        "clip_mode": {"mode": "reference-video", "img_video_position": "after"},
+        "video_items": {
+            "frame_extraction": false,
+            "cropping": false,
+            "blur": false,
+            "shake": false,
+            "watermark": false,
+            "brightness": false,
+            "contrast": false,
+            "saturation": false,
+            "color_balance": false,
+            "gamma": false,
+            "vintage_bw": false
+        },
+        "text_items": {
+            "subtitles": true,
+            "subtitles_mode": "images",
+            "danmaku": true,
+            "sticker": true
+        },
+        "affix": {"prepend_enabled": true, "append_enabled": false},
+        "audio": {
+            "background_music_enabled": true,
+            "speed_adjustment_enabled": true,
+            "pitch_enabled": true
+        },
+        "repetition": {"loop_count": 2},
+        "clip_duration": {"default_duration_per_image": 2.0}
+    }
+}
