@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Browser Plugin",
+  "description": "A Chrome extension starter project.",
+  "version": "0.1.0",
+  "action": {
+    "default_title": "Browser Plugin",
+    "default_popup": "popup/popup.html"
+  },
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/content-script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["activeTab", "storage", "scripting", "downloads", "tabs", "debugger", "clipboardRead"],
+  "host_permissions": ["https://*/*", "http://*/*"]
+}

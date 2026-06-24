@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browser Plugin</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <div class="header-title">
+          <h1>Browser Plugin</h1>
+          <p>百应选品收藏工具</p>
+        </div>
+      </header>
+
+      <!-- <section class="panel">
+        <div class="row">
+          <span class="label">当前页面</span>
+          <span id="page-title" class="value">读取中...</span>
+        </div>
+        <div class="row">
+          <span class="label">地址</span>
+          <span id="page-url" class="value">读取中...</span>
+        </div>
+      </section> -->
+
+      <!-- <section class="panel domain-panel">
+        <label class="field">
+          <span>启用域名</span>
+          <input id="target-domain" type="text" list="target-domain-options" placeholder="buyin.jinritemai.com" />
+          <datalist id="target-domain-options">
+            <option value="buyin.jinritemai.com"></option>
+          </datalist>
+        </label>
+        <div id="domain-status" class="status-text">默认：buyin.jinritemai.com</div>
+      </section> -->
+
+      <section class="panel auth-panel">
+        <label class="field">
+          <span>接口域名</span>
+          <input id="admin-base-url" type="text" placeholder="http://127.0.0.1:8080" />
+        </label>
+        <div class="field-grid">
+          <label class="field">
+            <span>账号</span>
+            <input id="admin-username" type="text" placeholder="用户名" />
+          </label>
+          <label class="field">
+            <span>密码</span>
+            <input id="admin-password" type="password" placeholder="密码" />
+          </label>
+        </div>
+        <label class="checkbox-field">
+          <input id="remember-credentials" type="checkbox" />
+          <span>记住账号密码</span>
+        </label>
+        <button id="login-button" class="primary-button" type="button">登录后台</button>
+        <div id="login-status" class="status-text">未登录</div>
+      </section>
+
+      <section class="panel category-panel">
+        <label class="field">
+          <span>收藏品类</span>
+          <select id="category-select">
+            <option value="">请先登录后台并加载品类</option>
+          </select>
+        </label>
+        <div class="button-row">
+          <button id="reload-category-button" class="secondary-button" type="button">刷新品类</button>
+          <button id="save-category-button" class="primary-button compact" type="button">保存品类</button>
+        </div>
+        <div id="category-status" class="status-text">收藏时会按该品类写入后台选品记录</div>
+      </section>
+
+      <section class="panel directory-panel">
+        <label class="field">
+          <span>保存目录</span>
+          <div class="directory-input-row">
+            <input id="download-directory" type="text" list="download-directory-options" placeholder="可选子目录" />
+            <button id="choose-directory-button" class="secondary-button compact" type="button">选择</button>
+          </div>
+          <datalist id="download-directory-options">
+            <option value="百应选品"></option>
+            <option value="选品素材"></option>
+            <option value="商品素材"></option>
+            <option value="百应选品/今日收藏"></option>
+          </datalist>
+        </label>
+        <div id="directory-status" class="status-text">默认：浏览器默认下载目录</div>
+      </section>
+
+      <section class="panel directory-panel hidden-panel">
+        <label class="field">
+          <span>发布目录</span>
+          <div class="directory-input-row">
+            <input id="publish-directory" type="text" list="publish-directory-options" placeholder="请选择发布目录" />
+            <button id="choose-publish-directory-button" class="secondary-button compact" type="button">选择</button>
+          </div>
+          <datalist id="publish-directory-options">
+            <option value="发布素材"></option>
+            <option value="成片发布"></option>
+          </datalist>
+        </label>
+        <div id="publish-directory-status" class="status-text">未选择发布目录</div>
+      </section>
+    </main>
+    <script src="./popup.js"></script>
+  </body>
+</html>
