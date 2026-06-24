@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
+  <title>抖音发布客户端</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-title">
+        <span class="logo">🎬</span>
+        <h1>抖音发布客户端</h1>
+      </div>
+      <div class="status-badge" id="statusBadge">待机</div>
+    </header>
+
+    <section class="card config-card">
+      <h2>服务端配置</h2>
+      <div class="config-grid">
+        <div class="form-row form-row-wide">
+          <label for="serverUrl">服务端域名</label>
+          <input
+            id="serverUrl"
+            type="text"
+            placeholder="http://主机:端口 或 主机:端口"
+            spellcheck="false"
+          />
+        </div>
+        <div class="form-row">
+          <label for="grpcPort">gRPC端口</label>
+          <input
+            id="grpcPort"
+            type="number"
+            min="1"
+            max="65535"
+            step="1"
+            placeholder="9090"
+            spellcheck="false"
+          />
+        </div>
+        <div class="form-row">
+          <label for="serverAccount">登录账号</label>
+          <input id="serverAccount" type="text" />
+        </div>
+        <div class="form-row">
+          <label for="serverPassword">登录密码</label>
+          <input id="serverPassword" type="password" />
+        </div>
+        <div class="form-row">
+          <label for="publishConcurrency">发布并发账号数</label>
+          <input
+            id="publishConcurrency"
+            type="number"
+            min="1"
+            max="10"
+            step="1"
+            placeholder="10"
+            spellcheck="false"
+          />
+        </div>
+        <div class="form-row publish-dir-row">
+          <label for="publishDir">发布目录</label>
+          <div class="input-action">
+            <input
+              id="publishDir"
+              type="text"
+              placeholder="为空时使用服务端下发目录"
+              spellcheck="false"
+            />
+            <button type="button" class="btn btn-ghost btn-select-dir" id="btnSelectPublishDir">选择</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card control-card">
+      <h2>运行控制</h2>
+      <div class="control-bar">
+        <div class="btn-group">
+          <button type="button" class="btn btn-start" id="btnStart">启动</button>
+          <button type="button" class="btn btn-pause" id="btnPause">暂停</button>
+          <button type="button" class="btn btn-resume" id="btnResume">继续</button>
+          <button type="button" class="btn btn-stop" id="btnStop">停止</button>
+        </div>
+      </div>
+      <p class="control-hint" id="controlHint">点击「启动」连接服务端并进入可接收任务状态</p>
+    </section>
+
+    <section class="card log-card">
+      <div class="log-header">
+        <h2>运行日志</h2>
+        <button type="button" class="btn btn-ghost" id="btnClearLog">清空面板</button>
+      </div>
+      <pre id="logPanel" class="log-panel" aria-live="polite"></pre>
+    </section>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

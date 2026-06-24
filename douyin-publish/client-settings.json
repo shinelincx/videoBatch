@@ -1,0 +1,8 @@
+{
+  "serverUrl": "http://47.113.125.61:8180",
+  "grpcPort": 9190,
+  "publishDir": "D:\\test\\output",
+  "serverAccount": "admin",
+  "serverPassword": "123456",
+  "guiPort": 17890
+}

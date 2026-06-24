@@ -1,0 +1,58 @@
+{
+  "name": "douyin-auto-publisher",
+  "version": "4.1.0",
+  "main": "gui-main.js",
+  "description": "抖音发布客户端（图形界面 + 自动发布）",
+  "scripts": {
+    "start": "node gui-main.js",
+    "cli": "node index.js",
+    "gui": "node gui-main.js",
+    "publish": "node gui-main.js",
+    "clear": "node index.js --clear-session",
+    "test": "node douyin-publish.test.js",
+    "build:bundle": "node build.js",
+    "build:client": "node scripts/package-client.js",
+    "build:client:win": "node scripts/package-client.js --win",
+    "build:client:mac": "node scripts/package-client.js --mac",
+    "build:client:all": "node scripts/package-client.js --all",
+    "build:client:pkg": "node scripts/package-client.js --pkg",
+    "build:exe": "node scripts/package-client.js --win",
+    "build": "npm run build:client",
+    "postinstall": "node scripts/check-playwright.js || true"
+  },
+  "keywords": [
+    "douyin",
+    "auto-publish",
+    "playwright",
+    "automation",
+    "human-simulator"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.4",
+    "@grpc/proto-loader": "^0.8.1",
+    "playwright": "^1.60.0"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.20.0",
+    "esbuild": "^0.28.0",
+    "nexe": "^5.0.0-beta.4"
+  },
+  "pkg": {
+    "scripts": "dist/bundle.js",
+    "assets": [
+      "gui/**/*",
+      "proto/**/*",
+      "node_modules/@grpc/**/*",
+      "node_modules/@grpc/grpc-js/**/*",
+      "node_modules/@grpc/proto-loader/**/*",
+      "node_modules/playwright/**/*",
+      "node_modules/playwright-core/**/*",
+      "node_modules/playwright-core/browsers.json",
+      "node_modules/playwright-core/lib/**/*.js",
+      "node_modules/playwright-core/lib/**/*.json"
+    ],
+    "outputPath": "dist"
+  }
+}

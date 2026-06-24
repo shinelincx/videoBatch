@@ -1,0 +1,37 @@
+{
+  "entries": [
+    {
+      "id": "tt_beauty_001",
+      "platform": "TikTok",
+      "category": "Beauty",
+      "type": "Viral Copy",
+      "content": "I can't believe this serum is only $12! Listen, I've tried every expensive serum out there and this drugstore one literally cleared my acne in 2 weeks. Look at my before and after — the texture is completely gone! It has niacinamide and hyaluronic acid, super lightweight, doesn't pill under makeup. Over 50k five-star reviews can't be wrong. Link in bio, grab it before it sells out again!",
+      "metrics": { "likes": 250000, "shares": 85000, "comments": 12000 },
+      "tags": ["serum", "acne", "skincare", "affordable", "drugstore"],
+      "source": "tiktok_creators",
+      "updated": "2025-05-15"
+    },
+    {
+      "id": "tt_beauty_002",
+      "platform": "TikTok",
+      "category": "Beauty",
+      "type": "Viral Copy",
+      "content": "If you struggle with dark circles like me, you NEED this concealer. It literally makes my under-eyes look airbrushed — no filter! The coverage is insane but somehow it still looks natural. Doesn't crease, doesn't settle into fine lines, and one tiny dot covers everything. I've had the same tube for 4 months and I use it every single day. Best $8 I've ever spent. Link in bio!",
+      "metrics": { "likes": 320000, "shares": 120000, "comments": 18000 },
+      "tags": ["concealer", "dark circles", "makeup", "affordable"],
+      "source": "tiktok_creators",
+      "updated": "2025-05-20"
+    },
+    {
+      "id": "tt_beauty_003",
+      "platform": "TikTok",
+      "category": "Beauty",
+      "type": "Viral Copy",
+      "content": "This sunscreen changed my life and I'm not exaggerating. Zero white cast, feels like water on the skin, and it actually works under makeup. SPF 50 with skincare benefits — it has centella and green tea to calm redness. I've gone through 5 bottles already. If you hate wearing sunscreen because it feels greasy or breaks you out, TRY THIS ONE. Link in bio, your skin will thank you!",
+      "metrics": { "likes": 410000, "shares": 155000, "comments": 22000 },
+      "tags": ["sunscreen", "SPF", "skincare", "summer", "kbeauty"],
+      "source": "tiktok_creators",
+      "updated": "2025-06-01"
+    }
+  ]
+}
