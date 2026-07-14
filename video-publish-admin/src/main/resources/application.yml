@@ -11,10 +11,10 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: ${DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/video-publish-admin?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true}
+    url: ${DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/video_publish?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true}
 #    url: ${DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/video_publish?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true}
     username: root
-    password: root
+    password: 12345678
 #    password: 6o1niz1c
     druid:
       # 初始连接数

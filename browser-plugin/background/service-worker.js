@@ -143,6 +143,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message?.type === "SAVE_SELECTION_VIDEO_CONTENT") {
+    saveSelectionVideoContent(message.payload)
+      .then(result => sendResponse(result))
+      .catch(error => {
+        sendResponse(errorResponse(error));
+      });
+    return true;
+  }
+
   if (message?.type === "OPEN_CREATOR" || message?.type === "OPEN_CREATOR_WITH_COOKIE") {
     openCreator(message.payload)
       .then(result => sendResponse(result))
@@ -1695,6 +1704,27 @@ async function updateSelectionRecordStatusByProductId(baseUrl, productId, status
     productId: normalizedProductId,
     status
   };
+}
+
+async function saveSelectionVideoContent(payload = {}) {
+  const { session } = await adminContext(false);
+  const productId = normalizeComparable(payload.productId || payload.commodityId || payload.id);
+  if (!productId) {
+    throw new Error("商品ID不能为空");
+  }
+  const result = await signedFetch(session.baseUrl, "/selection/record/update_video_content_by_product_id", {
+    method: "POST",
+    body: JSON.stringify({
+      productId,
+      videoTitle: normalizeComparable(payload.videoTitle),
+      videoCopy: normalizeComparable(payload.videoCopy),
+      videoTopic: normalizeComparable(payload.videoTopic)
+    })
+  });
+  if (result?.code !== 0) {
+    throw new Error(result?.msg || `更新视频内容失败：${productId}`);
+  }
+  return result.data || { productId };
 }
 
 async function createPublishRecord(baseUrl, productId, accountId) {

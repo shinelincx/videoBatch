@@ -525,7 +525,7 @@ public class PublishAccountService {
             accountTask.put("productCategoryName", firstNonEmpty(
                     firstValue(baseAccount, "product_category_name", "productCategoryName"),
                     firstValue(publishAccount, "product_category_name", "productCategoryName", "displayCategoryNames")));
-            accountTask.put("dailyMaxPublishCount", publishLimitCount(publishAccount, baseAccount));
+            accountTask.put("dailyMaxPublishCount", accountDailyMaxPublishCount(baseAccount));
             accountTask.put("publishConditionTotalNum", firstValue(publishAccount, "publishConditionTotalNum"));
             accountTask.put("publishConditions", publishAccount.get("publishConditions"));
             accountTask.put("todayPublishCount", intValue(firstValue(publishAccount, "todayPublishCount", "today_publish_count")));
@@ -1183,6 +1183,7 @@ public class PublishAccountService {
         clauses.add("psr.`status` = ?");
         args.add(STATUS_PENDING_PUBLISH);
         clauses.add("psr.`product_category_id` is not null");
+        appendNotInPublishRecordClause(clauses, args, tenantId);
         if (tableHasColumn("clip_record", "deleted")) {
             clauses.add("ifnull(cr.`deleted`, 0) = 0");
         }
@@ -1255,6 +1256,22 @@ public class PublishAccountService {
                     .add(product);
         }
         return productsByCategory;
+    }
+
+    private void appendNotInPublishRecordClause(List<String> clauses, List<Object> args, Long tenantId) {
+        if (!tableExists("publish_record") || !tableHasColumn("publish_record", "product_id")) {
+            return;
+        }
+        StringBuilder sql = new StringBuilder("not exists (select 1 from `publish_record` pr where pr.`product_id` = psr.`product_id`");
+        if (tableHasColumn("publish_record", "deleted")) {
+            sql.append(" and ifnull(pr.`deleted`, 0) = 0");
+        }
+        if (tenantId != null && tableHasColumn("publish_record", "tenant_id")) {
+            sql.append(" and pr.`tenant_id` = ?");
+            args.add(tenantId);
+        }
+        sql.append(")");
+        clauses.add(sql.toString());
     }
 
     private String firstExistingTableColumn(String tableName, String... names) {
@@ -2139,7 +2156,11 @@ public class PublishAccountService {
     }
 
     private Map<String, Integer> todayPublishCountMap(List<Map<String, Object>> rows) {
-        if (rows == null || rows.isEmpty() || !dailyPublishCountTableAvailable()) {
+        if (rows == null || rows.isEmpty()
+                || !tableExists("publish_record")
+                || !tableHasColumn("publish_record", "account_id")
+                || !tableHasColumn("publish_record", "update_time")
+                || !tableHasColumn("publish_record", "status")) {
             return Collections.emptyMap();
         }
         List<Object> accountIds = rows.stream()
@@ -2153,18 +2174,28 @@ public class PublishAccountService {
 
         List<Object> args = new ArrayList<>();
         List<String> clauses = new ArrayList<>();
-        clauses.add("`day` = ?");
-        args.add(currentDay());
+        LocalDate today = LocalDate.now();
+        clauses.add("`update_time` >= ?");
+        args.add(today.atStartOfDay());
+        clauses.add("`update_time` < ?");
+        args.add(today.plusDays(1).atStartOfDay());
+        clauses.add("`status` = ?");
+        args.add("发布成功");
         String placeholders = accountIds.stream().map(id -> "?").collect(Collectors.joining(", "));
         clauses.add("`account_id` in (" + placeholders + ")");
         args.addAll(accountIds);
-        if (tableHasColumn(DAILY_PUBLISH_COUNT_TABLE_NAME, "deleted")) {
+        if (tableHasColumn("publish_record", "deleted")) {
             clauses.add("ifnull(`deleted`, 0) = 0");
+        }
+        Long tenantId = TenantUtils.currentTenantId();
+        if (tenantId != null && tableHasColumn("publish_record", "tenant_id")) {
+            clauses.add("`tenant_id` = ?");
+            args.add(tenantId);
         }
 
         List<Map<String, Object>> countRows = jdbcTemplate.queryForList(
-                "select `account_id`, ifnull(`count`, 0) as `publish_count` from " + QUOTED_DAILY_PUBLISH_COUNT_TABLE_NAME +
-                        " where " + String.join(" and ", clauses),
+                "select `account_id`, count(1) as `publish_count` from `publish_record` where " +
+                        String.join(" and ", clauses) + " group by `account_id`",
                 args.toArray());
         Map<String, Integer> result = new HashMap<>();
         for (Map<String, Object> row : countRows) {
@@ -2284,43 +2315,34 @@ public class PublishAccountService {
     }
 
     private boolean publishLimitReached(Map<String, Object> publishAccount, Map<String, Object> baseAccount) {
-        if (publishAccount != null && publishAccount.containsKey("publishConditionRemainingCount")) {
-            return intValue(publishAccount.get("publishConditionRemainingCount")) <= 0;
-        }
-        int publishLimit = publishLimitCount(publishAccount, baseAccount);
-        if (publishLimit <= 0) {
-            return false;
-        }
-        int todayPublishCount = intValue(firstValue(publishAccount, "todayPublishCount", "today_publish_count"));
-        return todayPublishCount >= publishLimit;
+        return remainingPublishCount(publishAccount, baseAccount) <= 0;
     }
 
     private int remainingPublishCount(Map<String, Object> publishAccount, Map<String, Object> baseAccount) {
+        int dailyRemainingCount = dailyRemainingPublishCount(publishAccount, baseAccount);
         if (publishAccount != null && publishAccount.containsKey("publishConditionRemainingCount")) {
-            return Math.max(intValue(publishAccount.get("publishConditionRemainingCount")), 0);
+            int conditionRemainingCount = Math.max(intValue(publishAccount.get("publishConditionRemainingCount")), 0);
+            return Math.min(conditionRemainingCount, dailyRemainingCount);
         }
-        int publishLimit = publishLimitCount(publishAccount, baseAccount);
-        if (publishLimit <= 0) {
-            return 0;
-        }
-        int todayPublishCount = intValue(firstValue(publishAccount, "todayPublishCount", "today_publish_count"));
-        return Math.max(publishLimit - todayPublishCount, 0);
+        return dailyRemainingCount;
     }
 
-    private int publishLimitCount(Map<String, Object> publishAccount, Map<String, Object> baseAccount) {
-        int conditionLimit = intValue(firstValue(publishAccount,
-                "publishConditionAllowedCount", "publishConditionTotalNum"));
-        if (conditionLimit > 0) {
-            return conditionLimit;
-        }
-        if (baseAccount == null || baseAccount.isEmpty()) {
-            return 0;
-        }
-        int dailyMaxPublishCount = intValue(firstValue(baseAccount, "daily_max_publish_count", "dailyMaxPublishCount"));
+    private int dailyRemainingPublishCount(Map<String, Object> publishAccount, Map<String, Object> baseAccount) {
+        int dailyMaxPublishCount = accountDailyMaxPublishCount(baseAccount);
         if (dailyMaxPublishCount <= 0) {
             return 0;
         }
-        return dailyMaxPublishCount;
+        int todayPublishCount = publishAccount == null
+                ? 0
+                : intValue(firstValue(publishAccount, "todayPublishCount", "today_publish_count"));
+        return Math.max(dailyMaxPublishCount - todayPublishCount, 0);
+    }
+
+    private int accountDailyMaxPublishCount(Map<String, Object> baseAccount) {
+        if (baseAccount == null || baseAccount.isEmpty()) {
+            return 0;
+        }
+        return Math.max(intValue(firstValue(baseAccount, "daily_max_publish_count", "dailyMaxPublishCount")), 0);
     }
 
     private Map<String, Map<String, Object>> baseAccountMap(List<Map<String, Object>> rows) {

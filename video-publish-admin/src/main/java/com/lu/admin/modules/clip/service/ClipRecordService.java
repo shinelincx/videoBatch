@@ -291,6 +291,9 @@ public class ClipRecordService extends ServiceImpl<ClipRecordMapper, ClipRecord>
         String clipConfigIdSelect = clipConfigIdSelect("psr");
         String clipConfigCodeSelect = clipConfigCodeSelect("psr");
         String reasonSelect = tableHasColumn("product_selection_records", "reason") ? "psr.`reason`" : "null";
+        String videoTitleSelect = tableHasColumn("product_selection_records", "video_title") ? "psr.`video_title`" : "null";
+        String videoCopySelect = tableHasColumn("product_selection_records", "video_copy") ? "psr.`video_copy`" : "null";
+        String videoTopicSelect = tableHasColumn("product_selection_records", "video_topic") ? "psr.`video_topic`" : "null";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(
                 "select cr.`id`, cr.`product_id`, cr.`create_time`, cr.`update_time`, " +
                         deletedSelect + " as `deleted`, " +
@@ -299,7 +302,10 @@ public class ClipRecordService extends ServiceImpl<ClipRecordMapper, ClipRecord>
                         clipConfigIdSelect + " as `clip_config_id`, " +
                         clipConfigCodeSelect + " as `clip_config_code`, " +
                         "psr.`status`, " +
-                        reasonSelect + " as `reason` " +
+                        reasonSelect + " as `reason`, " +
+                        videoTitleSelect + " as `video_title`, " +
+                        videoCopySelect + " as `video_copy`, " +
+                        videoTopicSelect + " as `video_topic` " +
                         "from `clip_record` cr " +
                         "join (" +
                         "select `product_id`, max(`id`) as `id` from `product_selection_records`" +
@@ -632,6 +638,9 @@ public class ClipRecordService extends ServiceImpl<ClipRecordMapper, ClipRecord>
         record.setClipConfigCode(stringValue(row.get("clip_config_code")));
         record.setStatus(stringValue(row.get("status")));
         record.setReason(stringValue(row.get("reason")));
+        record.setVideoTitle(stringValue(row.get("video_title")));
+        record.setVideoCopy(stringValue(row.get("video_copy")));
+        record.setVideoTopic(stringValue(row.get("video_topic")));
         record.setCreateTime(localDateTime(row.get("create_time")));
         record.setUpdateTime(localDateTime(row.get("update_time")));
         record.setDeleted(intValue(row.get("deleted")));
