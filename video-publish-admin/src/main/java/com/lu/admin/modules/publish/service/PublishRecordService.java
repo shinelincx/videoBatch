@@ -263,10 +263,13 @@ public class PublishRecordService {
             throw new BizException("publish_record 表缺少 id 或 status 字段");
         }
 
-        Map<String, Object> record = loadRecordById(id);
+        Map<String, Object> record = loadRecordById(id, true);
         if (record.isEmpty()) {
             throw new BizException("发布记录不存在或无权限");
         }
+        Object oldStatusValue = firstValue(record, "status");
+        String oldStatus = oldStatusValue == null ? null : String.valueOf(oldStatusValue);
+        boolean successTransition = "发布成功".equals(normalizedStatus) && !"发布成功".equals(oldStatus);
         Object productValue = firstValue(record, "product_id", "productId");
         String productId = productValue == null ? "" : String.valueOf(productValue).trim();
         if (productId.isEmpty()) {
@@ -311,6 +314,8 @@ public class PublishRecordService {
         result.put("productId", productId);
         result.put("accountId", accountId);
         result.put("status", normalizedStatus);
+        result.put("oldStatus", oldStatus);
+        result.put("successTransition", successTransition);
         result.put("reason", normalizedReason);
         result.put("publishRecordUpdated", publishRecordUpdated);
         result.put("selectionRecordUpdated", selectionRecordUpdated);
@@ -400,6 +405,10 @@ public class PublishRecordService {
     }
 
     private Map<String, Object> loadRecordById(Long id) {
+        return loadRecordById(id, false);
+    }
+
+    private Map<String, Object> loadRecordById(Long id, boolean forUpdate) {
         List<Object> args = new java.util.ArrayList<>();
         List<String> clauses = new java.util.ArrayList<>();
         clauses.add("`id` = ?");
@@ -413,7 +422,8 @@ public class PublishRecordService {
             args.add(tenantId);
         }
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(
-                "select * from " + QUOTED_TABLE_NAME + " where " + String.join(" and ", clauses) + " limit 1",
+                "select * from " + QUOTED_TABLE_NAME + " where " + String.join(" and ", clauses) + " limit 1" +
+                        (forUpdate ? " for update" : ""),
                 args.toArray());
         return rows.isEmpty() ? new HashMap<>() : rows.get(0);
     }

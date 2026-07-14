@@ -15,6 +15,7 @@ import com.lu.admin.modules.selection.dto.SelectionRecordExistsRequest;
 import com.lu.admin.modules.selection.dto.SelectionRecordProductIdRequest;
 import com.lu.admin.modules.selection.dto.SelectionRecordSearchDto;
 import com.lu.admin.modules.selection.dto.SelectionRecordStatusUpdateRequest;
+import com.lu.admin.modules.selection.dto.SelectionRecordVideoContentRequest;
 import com.lu.admin.modules.selection.entity.SelectionRecord;
 import com.lu.admin.modules.selection.service.SelectionRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,6 +201,39 @@ public class SelectionRecordController {
         return new ObjectRestResponse();
     }
 
+    @PostMapping("/update_video_content_by_product_id")
+    public ObjectRestResponse updateVideoContentByProductId(@RequestBody SelectionRecordVideoContentRequest request) {
+        ensureSelectionRecordColumns();
+        if (request == null || !hasText(request.getProductId())) {
+            throw new BizException("商品ID不能为空");
+        }
+
+        String productId = request.getProductId().trim();
+        QueryWrapper<SelectionRecord> countWrapper = TenantUtils.filter(new QueryWrapper<SelectionRecord>())
+                .eq("product_id", productId);
+        long count = selectionRecordService.count(countWrapper);
+        if (count <= 0) {
+            throw new BizException("商品ID对应的选品记录不存在或无权限");
+        }
+        if (hasText(request.getVideoTitle())
+                || hasText(request.getVideoCopy())
+                || hasText(request.getVideoTopic())) {
+            SelectionRecord update = new SelectionRecord();
+            update.setVideoTitle(normalizeOptionalText(request.getVideoTitle()));
+            update.setVideoCopy(normalizeOptionalText(request.getVideoCopy()));
+            update.setVideoTopic(normalizeOptionalText(request.getVideoTopic()));
+            QueryWrapper<SelectionRecord> updateWrapper = TenantUtils.filter(new QueryWrapper<SelectionRecord>())
+                    .eq("product_id", productId);
+            selectionRecordService.update(update, updateWrapper);
+        }
+
+        return new ObjectRestResponse()
+                .data("productId", productId)
+                .data("videoTitle", request.getVideoTitle())
+                .data("videoCopy", request.getVideoCopy())
+                .data("videoTopic", request.getVideoTopic());
+    }
+
     @PostMapping("/update_status_by_product_id")
     @Transactional(rollbackFor = Exception.class)
     public ObjectRestResponse updateStatusByProductId(@RequestBody SelectionRecordStatusUpdateRequest request) {
@@ -354,6 +388,9 @@ public class SelectionRecordController {
         ensureColumn("total_sales", "int null default null comment '总销量'");
         ensureColumn("seller_count", "int null default null comment '带货人数'");
         ensureColumn("shop_name", "varchar(200) character set utf8mb4 collate utf8mb4_unicode_ci null default null comment '商铺名称'");
+        ensureColumn("video_title", "varchar(255) character set utf8mb4 collate utf8mb4_unicode_ci null default null comment '视频标题'");
+        ensureColumn("video_copy", "text character set utf8mb4 collate utf8mb4_unicode_ci null comment '视频文案'");
+        ensureColumn("video_topic", "text character set utf8mb4 collate utf8mb4_unicode_ci null comment '视频话题'");
         ensureColumn("status", "varchar(50) character set utf8mb4 collate utf8mb4_unicode_ci null default null comment '状态：已作废、待配置、待剪辑、剪辑中、剪辑失败、待发布、发布中、发布失败、发布成功'");
         ensureColumn("reason", "varchar(500) character set utf8mb4 collate utf8mb4_unicode_ci null default null comment '原因'");
         ensureColumn("tenant_id", "bigint null default null comment '租户标识'");
@@ -395,6 +432,13 @@ public class SelectionRecordController {
         if (tableHasColumn("product_selection_records", columnName)) {
             jdbcTemplate.execute("alter table `product_selection_records` drop column `" + columnName + "`");
         }
+    }
+
+    private String normalizeOptionalText(String value) {
+        if (!hasText(value)) {
+            return null;
+        }
+        return value.trim();
     }
 
     private void migrateAccountNickname() {

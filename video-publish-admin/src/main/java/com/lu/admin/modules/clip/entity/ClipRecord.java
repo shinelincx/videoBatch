@@ -64,4 +64,25 @@ public class ClipRecord extends BaseEntity {
     @TableField(exist = false)
     @Schema(description = "原因：通过商品ID关联选品记录查询")
     private String reason;
+
+    /**
+     * 视频标题：通过商品ID关联选品记录查询
+     */
+    @TableField(exist = false)
+    @Schema(description = "视频标题：通过商品ID关联选品记录查询")
+    private String videoTitle;
+
+    /**
+     * 视频文案：通过商品ID关联选品记录查询
+     */
+    @TableField(exist = false)
+    @Schema(description = "视频文案：通过商品ID关联选品记录查询")
+    private String videoCopy;
+
+    /**
+     * 视频话题：通过商品ID关联选品记录查询
+     */
+    @TableField(exist = false)
+    @Schema(description = "视频话题：通过商品ID关联选品记录查询")
+    private String videoTopic;
 }

@@ -103,6 +103,24 @@ public class SelectionRecord extends BaseEntity {
     private String shopName;
 
     /**
+     * 视频标题
+     */
+    @Schema(description = "视频标题")
+    private String videoTitle;
+
+    /**
+     * 视频文案
+     */
+    @Schema(description = "视频文案")
+    private String videoCopy;
+
+    /**
+     * 视频话题
+     */
+    @Schema(description = "视频话题")
+    private String videoTopic;
+
+    /**
      * 状态
      */
     @Schema(description = "状态")

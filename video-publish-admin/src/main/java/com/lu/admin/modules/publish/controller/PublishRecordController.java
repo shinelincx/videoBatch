@@ -52,7 +52,7 @@ public class PublishRecordController {
             request = new PublishRecordStatusUpdateRequest();
         }
         Map<String, Object> result = publishRecordService.updateStatus(request.getId(), request.getStatus(), request.getReason());
-        int publishAccountUpdated = "发布成功".equals(result.get("status"))
+        int publishAccountUpdated = Boolean.TRUE.equals(result.get("successTransition"))
                 ? publishAccountService.incrementTodayPublishCount(numberToLong(result.get("accountId")))
                 : 0;
         result.put("publishAccountUpdated", publishAccountUpdated);

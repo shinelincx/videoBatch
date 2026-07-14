@@ -677,6 +677,54 @@
     return url ? [{ url, index: matched.index }] : [];
   }
 
+  function normalizeClipboardVideoText(value) {
+    return String(value || "")
+      .replace(/\r\n?/g, "\n")
+      .replace(/[ \t\f\v]+/g, " ")
+      .replace(/\n+/g, " ")
+      .trim();
+  }
+
+  function parseClipboardVideoContent(value) {
+    const text = String(value || "").replace(/\r\n?/g, "\n").trim();
+    const content = { videoTitle: "", videoCopy: "", videoTopic: "" };
+    const fieldMap = {
+      "标题": "videoTitle",
+      "语音转文字": "videoCopy",
+      "话题": "videoTopic"
+    };
+    const matches = [];
+    const labelPattern = /(^|\n)\s*(标题|语音转文字|话题)\s*[:：]\s*/g;
+    let match;
+    while ((match = labelPattern.exec(text)) !== null) {
+      matches.push({
+        label: match[2],
+        index: match.index,
+        start: labelPattern.lastIndex,
+        end: text.length
+      });
+    }
+    matches.forEach((item, index) => {
+      const next = matches[index + 1];
+      const fieldName = fieldMap[item.label];
+      if (next && next.index > item.start) {
+        item.end = next.index;
+      }
+      if (fieldName) {
+        content[fieldName] = normalizeClipboardVideoText(text.slice(item.start, item.end));
+      }
+    });
+    return content;
+  }
+
+  async function extractVideoContent() {
+    const content = parseClipboardVideoContent(await readClipboardText());
+    if (!content.videoTitle && !content.videoCopy && !content.videoTopic) {
+      throw new Error("剪贴板未找到视频文案，请先在页面一键复制，文本需包含：标题、语音转文字、话题");
+    }
+    return content;
+  }
+
   async function isFavorited(record = currentFavoriteRecord()) {
     const cacheKey = favoriteStatusKey(record);
     const cached = cacheKey ? favoriteStatusCache.get(cacheKey) : null;
@@ -861,6 +909,14 @@
     button.textContent = "下载中...";
     button.disabled = true;
     try {
+      const videoContent = await extractVideoContent(actionContainer);
+      record.videoTitle = videoContent.videoTitle;
+      record.videoCopy = videoContent.videoCopy;
+      record.videoTopic = videoContent.videoTopic;
+      await sendRuntimeMessage({
+        type: "SAVE_SELECTION_VIDEO_CONTENT",
+        payload: record
+      });
       const result = await sendRuntimeMessage({
         type: "DOWNLOAD_PRODUCT_VIDEOS",
         payload: record
