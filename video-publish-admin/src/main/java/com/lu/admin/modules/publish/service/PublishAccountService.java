@@ -2284,27 +2284,28 @@ public class PublishAccountService {
     }
 
     private boolean publishLimitReached(Map<String, Object> publishAccount, Map<String, Object> baseAccount) {
-        if (publishAccount != null && publishAccount.containsKey("publishConditionRemainingCount")) {
-            return intValue(publishAccount.get("publishConditionRemainingCount")) <= 0;
-        }
-        int publishLimit = publishLimitCount(publishAccount, baseAccount);
-        if (publishLimit <= 0) {
-            return false;
-        }
-        int todayPublishCount = intValue(firstValue(publishAccount, "todayPublishCount", "today_publish_count"));
-        return todayPublishCount >= publishLimit;
+        return remainingPublishCount(publishAccount, baseAccount) <= 0;
     }
 
     private int remainingPublishCount(Map<String, Object> publishAccount, Map<String, Object> baseAccount) {
+        int dailyRemainingCount = remainingDailyPublishCount(publishAccount, baseAccount);
         if (publishAccount != null && publishAccount.containsKey("publishConditionRemainingCount")) {
-            return Math.max(intValue(publishAccount.get("publishConditionRemainingCount")), 0);
+            int conditionRemainingCount = Math.max(intValue(publishAccount.get("publishConditionRemainingCount")), 0);
+            return dailyRemainingCount < 0 ? conditionRemainingCount : Math.min(conditionRemainingCount, dailyRemainingCount);
         }
-        int publishLimit = publishLimitCount(publishAccount, baseAccount);
-        if (publishLimit <= 0) {
-            return 0;
+        return Math.max(dailyRemainingCount, 0);
+    }
+
+    /**
+     * 返回每日总额度剩余量；未配置每日额度时返回 -1，表示仅受分时段条件限制。
+     */
+    private int remainingDailyPublishCount(Map<String, Object> publishAccount, Map<String, Object> baseAccount) {
+        int dailyPublishLimit = intValue(firstValue(baseAccount, "daily_max_publish_count", "dailyMaxPublishCount"));
+        if (dailyPublishLimit <= 0) {
+            return -1;
         }
         int todayPublishCount = intValue(firstValue(publishAccount, "todayPublishCount", "today_publish_count"));
-        return Math.max(publishLimit - todayPublishCount, 0);
+        return Math.max(dailyPublishLimit - todayPublishCount, 0);
     }
 
     private int publishLimitCount(Map<String, Object> publishAccount, Map<String, Object> baseAccount) {
@@ -2312,9 +2313,6 @@ public class PublishAccountService {
                 "publishConditionAllowedCount", "publishConditionTotalNum"));
         if (conditionLimit > 0) {
             return conditionLimit;
-        }
-        if (baseAccount == null || baseAccount.isEmpty()) {
-            return 0;
         }
         int dailyMaxPublishCount = intValue(firstValue(baseAccount, "daily_max_publish_count", "dailyMaxPublishCount"));
         if (dailyMaxPublishCount <= 0) {
