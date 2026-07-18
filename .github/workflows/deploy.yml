@@ -1,0 +1,119 @@
+name: Deploy video publish admin
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'video-publish-admin/**'
+      - 'video-publish-admin-www/**'
+      - 'deploy/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: video-publish-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build backend and frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+          cache: maven
+
+      - name: Build Spring Boot application
+        run: mvn --batch-mode --file video-publish-admin/pom.xml -DskipTests package
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: video-publish-admin-www/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: video-publish-admin-www
+        run: npm ci
+
+      - name: Build Angular application
+        working-directory: video-publish-admin-www
+        run: npm run build
+
+      - name: Package frontend assets
+        run: tar --directory=video-publish-admin-www/dist/video-publish-admin-www/browser --create --gzip --file="$RUNNER_TEMP/video-publish-admin-www.tar.gz" .
+
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend
+          path: video-publish-admin/target/video-publish-admin.jar
+          if-no-files-found: error
+
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend
+          path: ${{ runner.temp }}/video-publish-admin-www.tar.gz
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy production
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Check out deployment script
+        uses: actions/checkout@v4
+
+      - name: Download backend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend
+          path: artifacts/backend
+
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend
+          path: artifacts/frontend
+
+      - name: Configure SSH
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload release files
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          RELEASE_ID: ${{ github.sha }}
+        run: |
+          scp artifacts/backend/video-publish-admin.jar "$DEPLOY_USER@$DEPLOY_HOST:/tmp/video-publish-admin-$RELEASE_ID.jar"
+          scp artifacts/frontend/video-publish-admin-www.tar.gz "$DEPLOY_USER@$DEPLOY_HOST:/tmp/video-publish-admin-www-$RELEASE_ID.tar.gz"
+          scp deploy/remote-deploy.sh "$DEPLOY_USER@$DEPLOY_HOST:/tmp/video-publish-admin-deploy-$RELEASE_ID.sh"
+
+      - name: Activate release
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          RELEASE_ID: ${{ github.sha }}
+        run: ssh "$DEPLOY_USER@$DEPLOY_HOST" "bash /tmp/video-publish-admin-deploy-$RELEASE_ID.sh $RELEASE_ID /tmp"
