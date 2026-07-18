@@ -32,3 +32,4 @@ video-batch-processing-system/dist/
 video-batch-processing-system/_scratch/_pipeline_scratch/
 video-batch-processing-system/vendor/
 video-batch-processing-system/build/
+.worktrees/
